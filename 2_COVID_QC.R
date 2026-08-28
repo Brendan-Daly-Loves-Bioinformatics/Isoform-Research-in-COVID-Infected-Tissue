@@ -1,35 +1,94 @@
-# Load libraries
-library(ballgown)
-library(rtracklayer)
+# quality control of A549 COVID-19 RNA-seq short reads
+# raw and trimmed FASTQ files are assessed before downstream alignment and analysis
 
-# Simple test to check if file exists
-test_path <- "\\\\wsl.localhost\\Ubuntu\\home\\brendan\\majiq_quant\\deltapsi_for_R.tsv"
-cat("Testing path:", test_path, "\n")
-cat("File exists:", file.exists(test_path), "\n")
+# location of the RNA-seq data
+data_dir <- "//wsl$/Ubuntu/home/brendan/data/RNAseq_data/GSE147507/A549_COVID"
+fastq_dir <- file.path(data_dir, "FASTQ")
 
-if(file.exists(test_path)) {
-  # Try to read first few lines
-  cat("\nReading first 3 lines:\n")
-  lines <- readLines(test_path, n = 3)
-  for(i in 1:length(lines)) {
-    cat("Line", i, ":", lines[i], "\n")
-  }
-  
-  # Try to load the data
-  cat("\nLoading full file...\n")
-  majiq_data <- read.delim(test_path, stringsAsFactors = FALSE)
-  cat("Success! Loaded", nrow(majiq_data), "rows and", ncol(majiq_data), "columns\n")
-  cat("Column names:", paste(colnames(majiq_data), collapse = ", "), "\n")
-} else {
-  cat("\nFile not found. Listing files in directory:\n")
-  dir_path <- "\\\\wsl.localhost\\Ubuntu\\home\\brendan\\majiq_quant"
-  if(file.exists(dir_path)) {
-    files <- list.files(dir_path)
-    cat("Files in", dir_path, ":\n")
-    for(f in files) {
-      cat("  -", f, "\n")
-    }
-  } else {
-    cat("Directory not found either.\n")
-  }
-}
+# directory for FastQC output
+qc_dir <- file.path(fastq_dir, "fastqc_reports")
+
+# create the QC output directory
+dir.create(qc_dir, recursive = TRUE, showWarnings = FALSE)
+
+# identify raw FASTQ files
+fastq_files <- list.files(
+  fastq_dir,
+  pattern = "\\.fastq$",
+  full.names = TRUE
+)
+
+# extract sample IDs from FASTQ filenames
+sample_ids <- sub(
+  "\\.fastq$",
+  "",
+  basename(fastq_files)
+)
+
+length(sample_ids)
+
+# confirm that all expected FASTQ files are present
+length(sample_ids) == 24
+
+# confirm that all FASTQ files have non-zero file size
+file_sizes <- file.info(fastq_files, extra_cols = FALSE)$size
+
+all(file_sizes > 0)
+
+# location of previously trimmed FASTQ files
+trimmed_dir <- file.path(fastq_dir, "fastp_trimmed")
+
+# use the compressed trimmed FASTQ files for post-trimming QC
+trimmed_files <- list.files(
+  trimmed_dir,
+  pattern = "_trimmed\\.fastq\\.gz$",
+  full.names = TRUE
+)
+
+# confirm that one trimmed file is available for each sample
+length(trimmed_files)
+
+# extract sample IDs from the trimmed FASTQ files
+trimmed_ids <- sub(
+  "_trimmed\\.fastq\\.gz$",
+  "",
+  basename(trimmed_files)
+)
+
+# confirm that all original samples have a trimmed FASTQ file
+all(sample_ids %in% trimmed_ids)
+
+# directory for FastQC results from trimmed reads
+trimmed_qc_dir <- file.path(trimmed_dir, "fastqc_reports")
+
+dir.create(
+  trimmed_qc_dir,
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+# verify that FastQC generated one HTML and one ZIP report per sample
+trimmed_qc_files <- list.files(
+  trimmed_qc_dir,
+  pattern = "_fastqc\\.(html|zip)$",
+  full.names = TRUE
+)
+
+length(trimmed_qc_files)
+
+# separate HTML and ZIP reports
+trimmed_html <- list.files(
+  trimmed_qc_dir,
+  pattern = "_fastqc\\.html$",
+  full.names = TRUE
+)
+
+trimmed_zip <- list.files(
+  trimmed_qc_dir,
+  pattern = "_fastqc\\.zip$",
+  full.names = TRUE
+)
+
+# confirm that every trimmed sample has both report types
+length(trimmed_html) == length(trimmed_ids)
+length(trimmed_zip) == length(trimmed_ids)
