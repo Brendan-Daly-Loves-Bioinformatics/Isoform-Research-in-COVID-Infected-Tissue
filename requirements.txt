@@ -1,0 +1,7 @@
+# COVID-19 Splicing Analysis: Package Requirements
+# Generated: 2025-12-25 01:01:29.318572
+#
+# To install all packages, run:
+# source('install_required_packages.R')
+#
+# Package list:
