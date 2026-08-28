@@ -1,4 +1,4 @@
-# quality control of A549 COVID-19 RNA-seq short reads
+# Part 2: Quality Control of A549 COVID-19 RNA-seq Short Reads
 # raw and trimmed FASTQ files are assessed before downstream alignment and analysis
 
 # location of the RNA-seq data

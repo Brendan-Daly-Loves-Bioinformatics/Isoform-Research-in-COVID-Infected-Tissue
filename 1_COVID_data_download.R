@@ -1,5 +1,5 @@
-# Download the A549 COVID-19 RNA-seq data used for this research
-# (Files are very large, use with caution)
+# Part 1: Download the A549 COVID-19 RNA-seq Data Used for This Research
+# (files are very large, use with caution)
 
 # file directories
 data_dir <- "//wsl$/Ubuntu/home/brendan/data/RNAseq_data/GSE147507/A549_COVID"

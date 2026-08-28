@@ -1,4 +1,4 @@
-# differential expression analysis of A549 COVID-19 RNA sequencing data
+# Part 3: Differential Expression Analysis of A549 COVID-19 RNA Sequencing Data
 # gene-level expression is compared between control and infected samples
 
 # load Bioconductor package
