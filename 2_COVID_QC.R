@@ -35,6 +35,17 @@ file_sizes <- file.info(fastq_files, extra_cols = FALSE)$size
 
 all(file_sizes > 0)
 
+# verify raw FastQC reports exist (one HTML + one ZIP per sample)
+raw_html <- list.files(qc_dir, pattern = "_fastqc\\.html$", full.names = TRUE)
+raw_zip  <- list.files(qc_dir, pattern = "_fastqc\\.zip$",  full.names = TRUE)
+
+length(raw_html)
+length(raw_zip)
+
+# confirm that every raw sample has both report types
+length(raw_html) == length(sample_ids)
+length(raw_zip)  == length(sample_ids)
+
 # location of previously trimmed FASTQ files
 trimmed_dir <- file.path(fastq_dir, "fastp_trimmed")
 
@@ -57,6 +68,9 @@ trimmed_ids <- sub(
 
 # confirm that all original samples have a trimmed FASTQ file
 all(sample_ids %in% trimmed_ids)
+
+# confirm no extra or unexpected trimmed files
+setequal(sample_ids, trimmed_ids)
 
 # directory for FastQC results from trimmed reads
 trimmed_qc_dir <- file.path(trimmed_dir, "fastqc_reports")
@@ -91,4 +105,20 @@ trimmed_zip <- list.files(
 
 # confirm that every trimmed sample has both report types
 length(trimmed_html) == length(trimmed_ids)
-length(trimmed_zip) == length(trimmed_ids)
+length(trimmed_zip)  == length(trimmed_ids)
+
+# aggregate raw and trimmed FastQC reports with MultiQC (run via WSL)
+multiqc_dir <- file.path(data_dir, "multiqc")
+dir.create(multiqc_dir, recursive = TRUE, showWarnings = FALSE)
+
+# convert WSL Windows paths to native Linux paths for MultiQC
+linux_qc_dir      <- sub("//wsl\\$/Ubuntu", "", qc_dir)
+linux_trimmed_qc  <- sub("//wsl\\$/Ubuntu", "", trimmed_qc_dir)
+linux_multiqc_dir <- sub("//wsl\\$/Ubuntu", "", multiqc_dir)
+
+system(paste("wsl ~/.local/bin/multiqc", linux_qc_dir, linux_trimmed_qc, "-o", linux_multiqc_dir, "--dirs"))
+
+list.files(multiqc_dir, pattern = "\\.html$")
+
+# verify that the MultiQC report was created
+list.files(multiqc_dir, pattern = "\\.html$")
