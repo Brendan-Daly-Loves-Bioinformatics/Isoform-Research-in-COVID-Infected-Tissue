@@ -1,4 +1,4 @@
-# Part 4: Gene Ontology Enrichment Analysis
+# Part 5: Gene Ontology Enrichment Analysis
 # identify biological processes associated with significant genes
 
 # install required packages if needed
