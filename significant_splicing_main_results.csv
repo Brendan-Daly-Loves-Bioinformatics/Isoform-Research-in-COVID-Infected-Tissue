@@ -1,4 +1,0 @@
-"gene_name","event_type_label","mock_mean","infected_mean","delta_psi","p_value","adj_p_value","mock_n_calc","infected_n_calc"
-"SVIL-AS1","alternative_terminal",0.472,0.753,0.281,0.00176,0.0283,3,11
-"RASSF2","exon_skipping",0.319,0.564,0.245,0.000631,0.0229,3,6
-"CHD3","alternative_terminal",0.668,0.448,-0.219,0.000832,0.0238,4,9
