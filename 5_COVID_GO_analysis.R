@@ -81,7 +81,7 @@ tested_entrez <- tested_entrez[
   !duplicated(tested_entrez$ENSEMBL),
 ]
 
-# Remove duplicate Entrez IDs
+# remove duplicate Entrez IDs
 tested_entrez <- tested_entrez[
   !duplicated(tested_entrez$ENTREZID),
 ]
@@ -109,21 +109,24 @@ head(go_results)
 cat(
   "Number of enriched GO Biological Processes:",
   nrow(as.data.frame(go_results)),
-  "\n"
+  "
+"
 )
 
 # number of significant genes with clean mappings
 cat(
   "Significant genes with one-to-one Entrez mappings:",
   nrow(entrez_ids_clean),
-  "\n"
+  "
+"
 )
 
 # number of genes in the GO background
 cat(
   "Genes in GO background universe:",
   nrow(tested_entrez),
-  "\n"
+  "
+"
 )
 
 # save GO enrichment results
@@ -137,8 +140,9 @@ write.csv(
 )
 
 # plot the top enriched biological processes
-
+png("go_dotplot.png", width = 1400, height = 1000, res = 150)
 dotplot(
   go_results,
   showCategory = 15
 )
+dev.off()
