@@ -3,6 +3,7 @@
 
 # load Bioconductor package
 library(DESeq2)
+library(ggplot2)
 
 # check the current working directory
 getwd()
