@@ -4,6 +4,13 @@ I am using R Bioconductor and its vast tools to analyze short-read RNAseq data, 
 
 Transcriptomics Pipeline
 
+1. Use SRA Toolkit to download SRA files and fasterq-dump to convert them to fastq files
+2. Run FastQC for quality control reports on the data, analyze and fix any issues, and trim adapters off the reads using fastp
+3. Use STAR (short read) or minimap2 (long read) to map RNAseq to a reference human genome, hg38. (may take hours/days)
+4. Simultaneously as step 3, samtools should be used to sort the minimap2 .bam file outputs into BAM and BAI files.
+5. Use STAR to make TAB files with the splice junction that minimap2 won't produce if needed.
+6. I ran MAJIQ on the BAM files to make gene-specific splice graphs.
+   
 Data Download
 
 Quality Control
